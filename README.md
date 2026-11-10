@@ -45,7 +45,7 @@ python -m venv .venv
 2. 在「实时情绪识别」里点击「开始识别」，面向电脑摄像头。页面实时预览画面，并在人脸框旁显示类别和置信度。预览旁显示最近一次课堂采样和已入库次数。
 3. 点击「停止识别」或「结束课堂」，系统会释放摄像头。
 
-OpenCV 在本机持续读取摄像头画面并运行随项目提供的模型。预览实时更新，每约 3 秒将一次达到 0.65 置信度阈值的采样匿名写入当前课堂。类别映射见 [系统设计](docs/architecture.md#实时摄像头识别)。
+OpenCV 在本机持续读取摄像头画面并运行随项目提供的模型。预览实时更新，每约 3 秒将一次达到 0.65 置信度阈值的采样匿名写入当前课堂。
 
 ## 目录
 
@@ -65,25 +65,9 @@ emotion-checker/
 │  ├─ templates/          # Jinja2 页面
 │  └─ static/             # 响应式样式和交互
 ├─ tests/                 # unittest 集成测试
-└─ docs/                  # 实验需求、架构、测试和报告
+└─ docs/                  # 用户手册
 ```
 
-## 提交文档
+## 用户手册
 
-| 材料 | 文件 |
-| --- | --- |
-| 需求规格说明书 | [需求规格说明](docs/requirements.md) |
-| 系统设计、架构图与修改版 MVC | [系统设计](docs/architecture.md) |
-| 数据库 ER 图 | [ER 图](docs/心晴课堂数据库ER图.png) |
-| API 文档 | [REST API](docs/api.md) |
-| 测试报告与测试用例 | [测试报告](docs/test-report.md) |
-| 部署说明与数据库初始化 | [快速运行](#快速运行) · [数据库脚本](emotion_checker/db.py) |
-| 用户手册 | [用户手册](docs/用户手册.md) |
-| 实验报告 | [实验报告](docs/实验报告.md) |
-
-运行功能测试和性能基准：
-
-```powershell
-python -m unittest discover -s tests -v
-python tests/benchmark.py
-```
+查看 [心晴课堂用户手册](docs/用户手册.md)，了解学生、教师和管理员的操作步骤。
