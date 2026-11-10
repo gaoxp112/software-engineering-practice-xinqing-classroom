@@ -142,7 +142,7 @@ def configure(doc):
     header_run.font.color.rgb = RGBColor.from_string(MUTED)
     footer = sec.footer.paragraphs[0]
     footer.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    fr = footer.add_run("2026 年 11 月 3 日  ·  第 ")
+    fr = footer.add_run("2026 年 11 月 10 日  ·  第 ")
     fr.font.size = Pt(8.5)
     fr.font.color.rgb = RGBColor.from_string(MUTED)
     add_page_field(footer)
@@ -171,7 +171,7 @@ def add_title_page(doc):
     r.font.size = Pt(19)
     r.font.color.rgb = RGBColor.from_string(ACCENT)
     doc.add_paragraph()
-    for label, value in [("课程", "软件工程实践"), ("系统名称", "心晴课堂"), ("报告日期", "2026 年 11 月 3 日")]:
+    for label, value in [("课程", "软件工程实践"), ("系统名称", "心晴课堂"), ("报告日期", "2026 年 11 月 10 日")]:
         p = doc.add_paragraph(style="Report Meta")
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p.add_run(f"{label}：{value}")
@@ -183,7 +183,7 @@ def add_title_page(doc):
     cell = box.cell(0, 0)
     set_cell_shading(cell, "F3F7F6")
     set_cell_border(cell, color="B9D7D2", size="8")
-    set_cell_text(cell, "结题结论  ·  学生、教师、管理员功能及视频 AI 抽帧分析和匿名入库流程均已完成本地验收；24 项自动化测试全部通过。现场演示仍需可用的视觉 API 配置、网络和录制视频。", size=10.5)
+    set_cell_text(cell, "结题结论  ·  系统完成学生情绪打卡、教师课堂看板、管理员统计与本机摄像头实时识别。", size=10.5)
     doc.add_page_break()
 
 
@@ -239,13 +239,11 @@ def parse_md_table(lines, start):
 
 
 def add_intro_summary(doc, draft):
-    # The first abstract is a concise, report-style executive summary.
-    h = doc.add_paragraph("摘要", style="Heading 1")
-    summary = ("本实验面向课堂反馈不及时、学生感受难以持续记录的问题，设计并实现“心晴课堂”表情符号课堂情绪检查器。系统采用 Flask、SQLite、Jinja2 与原生 CSS/JavaScript，提供学生、教师、管理员三类角色的浏览器端功能。学生可以加入课堂、选择六类情绪、补充说明、匿名提交并查询个人历史；教师可以创建与结束课堂、查看课堂反馈和统计；管理员可以维护用户与课堂名单、按条件查看数据并导出 CSV。系统同时提供 REST API、独立 AI 服务认证、AI 结果置信度过滤与匿名入库能力。\n\n截至 2026 年 11 月 3 日，演示数据库包含 17 个用户、13 个课堂、223 条情绪记录和 155 条课堂参与关系。24 项自动化测试全部通过。新增的视频工作器使用 FFmpeg 抽帧，经外部视觉 API 进行人脸判断和情绪分类，再将达到阈值的结果写入指定课堂；模拟视觉服务集成测试和真实 API 隔离数据库验证均完成。项目提供三段 10 秒 AI 生成的虚构成年人物案例视频及一键演示脚本。演示需要可用的 API 配置与网络；抽取帧会发送给第三方服务，系统不保存原始视频或帧图像。")
-    for para in summary.split("\n\n"):
-        doc.add_paragraph(para)
-    p = doc.add_paragraph(style="Report Meta")
-    p.add_run("关键词：课堂反馈；情绪检查；修改版 MVC；角色权限；REST API；响应式界面")
+    doc.add_paragraph("摘要", style="Heading 1")
+    abstract = draft.split("## 摘要", 1)[1].split("## 1 项目背景与目标", 1)[0]
+    for paragraph in abstract.strip().split("\n\n"):
+        style = "Report Meta" if paragraph.startswith("关键词") else None
+        doc.add_paragraph(paragraph, style=style)
 
 
 def main():
@@ -293,17 +291,17 @@ def main():
             if "学生课堂页面" in line:
                 add_picture(doc, IMG / "student-dashboard-desktop.png", "图 2 学生课堂列表（桌面端）：多课堂卡片同时展示课程、教师、课堂代码、个人提交次数和“记录感受”入口。", 6.15)
             elif "情绪提交页面" in line:
-                add_picture(doc, ROOT / "docs" / "guidance-visual-qa" / "desktop-03-checkin.png", "图 3 情绪提交页面（桌面端）：六类情绪、补充说明、匿名选项与提交动作；图中英文备注为视觉测试输入，不是固定产品文案。", 6.15)
+                add_picture(doc, ROOT / "docs" / "guidance-visual-qa" / "desktop-03-checkin.png", "图 3 情绪提交页面（桌面端）：六类情绪、补充说明、匿名选项与提交操作。", 6.15)
             elif "教师课堂管理" in line:
-                add_picture(doc, IMG / "teacher-sessions-latest.png", "图 4 教师课堂管理（桌面端）：多个课堂按卡片列出，并可进入对应看板；该图证明多课堂管理，不单独证明创建表单字段。", 6.15)
+                add_picture(doc, IMG / "teacher-sessions-latest.png", "图 4 教师课堂管理（桌面端）：多个课堂按卡片列出，卡片提供课堂看板入口。", 6.15)
             elif "管理员统计概览" in line:
-                add_picture(doc, IMG / "admin-overview-desktop.png", "图 5 管理员统计概览（桌面端）：图中 156 条反馈对应 2026-10-20 至 2026-10-27 日期筛选，不是数据库全部 223 条记录。", 6.15)
+                add_picture(doc, IMG / "admin-overview-desktop.png", "图 5 管理员统计概览（桌面端）：2026 年 10 月 20 日至 27 日筛选范围内共有 156 条反馈。", 6.15)
             elif "课堂安排" in line:
                 add_picture(doc, IMG / "admin-sessions-desktop.png", "图 6 管理员课堂安排（桌面端）：班级、教室、教师、状态、参与人数与名单管理入口集中呈现。", 6.15)
             elif "移动端画面" in line:
                 add_picture(doc, IMG / "student-dashboard-mobile.png", "图 7 学生课堂列表（360 px 移动端）：导航折叠、卡片单列排列，主要操作仍保持清楚的触控区域。", 2.65)
-            elif "AI 视频记录" in line:
-                add_picture(doc, IMG / "admin-records-ai-desktop.png", "图 8 管理端 AI 视频分析结果：记录页显示情绪来源和模型自报置信度；该画面来自隔离测试数据库。", 6.15)
+            elif "AI 采样记录" in line:
+                add_picture(doc, IMG / "admin-records-ai-desktop.png", "图 8 管理员情绪数据：记录页显示 AI 来源、情绪类别和置信度。", 6.15)
             i += 1; continue
         if line.startswith("|"):
             flush()
@@ -321,7 +319,7 @@ def main():
 
     # Keep the report's material index easy to scan at the end.
     doc.add_paragraph("交付说明", style="Heading 1")
-    doc.add_paragraph("本报告与源代码、数据库初始化脚本、测试报告、视觉验收截图、运行说明和 AI 案例视频共同构成本地实验交付。最终还需录制屏幕演示视频，并按课程平台要求提交项目材料。")
+    doc.add_paragraph("项目材料包括结题报告、源代码、数据库初始化脚本、测试报告、视觉验收截图和运行说明。屏幕演示按项目文档中的拍摄流程录制。")
     doc.core_properties.title = "表情符号课堂情绪检查器系统结题报告"
     doc.core_properties.subject = "软件工程实践"
     doc.core_properties.author = "软件工程实践课程项目"

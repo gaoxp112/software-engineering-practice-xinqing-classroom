@@ -26,12 +26,6 @@ class LocalExpressionModel:
         )
         self.classifier = cv2.dnn.readNetFromONNX(np.frombuffer(expression_weights.read_bytes(), np.uint8))
 
-    def analyze_frame(self, frame):
-        image = cv2.imdecode(np.frombuffer(frame.read_bytes(), np.uint8), cv2.IMREAD_COLOR)
-        if image is None:
-            raise ValueError(f"Cannot read sampled frame: {frame.name}")
-        return self.analyze_image(image)
-
     def analyze_image(self, image):
         height, width = image.shape[:2]
         self.detector.setInputSize((width, height))

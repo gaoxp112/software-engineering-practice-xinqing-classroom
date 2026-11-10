@@ -1,14 +1,14 @@
-# AI Integration Boundary
+# AI Integration
 
-The video worker uses FFmpeg to sample a recorded video and runs the bundled
-OpenCV Zoo ONNX models on the CPU. YuNet detects faces. The worker aligns the
-largest face in each frame and uses the MobileFaceNet-based Progressive Teacher
-model to classify its expression. It filters the top softmax score before sending
-only the result to `POST /api/ai/emoji-results` on the local Flask server.
+The teacher starts recognition from an open classroom dashboard. The camera
+worker reads the local webcam with OpenCV and runs the bundled ONNX models on the
+CPU. YuNet locates faces, and the MobileFaceNet model classifies the expression
+of the largest detected face after alignment.
 
-The local worker logs both the original expression (`emotion`) and the mapped
-classroom category (`mood`). It stores the mapped category with the original
-expression score. The mapping is a project convention for grouping results.
+The dashboard shows the live preview, face box, mapped category and confidence.
+About every three seconds, the worker stores a sample with a confidence of at
+least 0.65 as an anonymous AI record for the current classroom. The record
+contains the mapped category and the original expression score.
 
 | Model expression | Classroom category |
 | --- | --- |
@@ -20,7 +20,8 @@ expression score. The mapping is a project convention for grouping results.
 | `angry` 生气 | `anxious` 焦虑 |
 | `disgust` 厌恶 | `distracted` 分心 |
 
-The boundary enforces:
+The independent `POST /api/ai/emoji-results` endpoint supports AI result ingestion
+through the following contract:
 
 - a separate `X-AI-Service-Token`, never a student or teacher session token;
 - a configurable confidence threshold (`EMOTION_AI_THRESHOLD`, default 0.6);
@@ -29,11 +30,6 @@ The boundary enforces:
 - anonymous records when no `user_id` is provided;
 - no raw image, video, or face embedding persistence;
 - rejected rows and counts in the response for retry/error logging.
-
-The model classifies visible expressions. Lighting, occlusion, pose, and
-expression differences can affect the result. Its score is uncalibrated, and
-categories such as confusion and distraction require separate labeled data and
-validation if added to a future classifier.
 
 ## Bundled model sources
 
