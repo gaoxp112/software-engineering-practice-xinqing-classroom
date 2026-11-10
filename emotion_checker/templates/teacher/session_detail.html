@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}{{ class_session['title'] }} · 心晴课堂{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ url_for('teacher.sessions') }}">← 返回课堂管理</a>
+<header class="page-header page-header-split detail-header"><div><div class="status-line"><span class="status-dot {% if class_session['phase'] == 'closed' %}closed{% endif %}"></span>{{ {'open':'正在接收反馈', 'closed':'课堂已结束', 'scheduled':'等待开始'}[class_session['phase']] }} · 代码 {{ class_session['session_code'] }}</div><h1>{{ class_session['title'] }}</h1><p>{{ class_session['course_name'] }}{% if class_session['phase'] == 'scheduled' %} · 开课时间 {{ class_session['starts_at'][:16] }}{% endif %}</p></div><div class="action-row"><a class="button button-secondary" href="{{ url_for('teacher.session_records', session_id=class_session['id']) }}">查看反馈明细</a><a class="button button-secondary" href="{{ url_for('teacher.export_session', session_id=class_session['id']) }}">↓ 导出 CSV</a>{% if class_session['phase'] != 'scheduled' %}<form method="post" action="{{ url_for('teacher.toggle_session', session_id=class_session['id']) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="button {% if class_session['phase'] == 'open' %}button-dark{% else %}button-primary{% endif %}" type="submit">{{ '结束课堂' if class_session['phase'] == 'open' else '重新开放' }}</button></form>{% endif %}</div></header>
+{% if class_session['phase'] == 'open' %}
+<section class="panel camera-panel" data-camera-url="{{ url_for('teacher.session_camera', session_id=class_session['id']) }}">
+  <div class="panel-heading">
+    <div>
+      <p class="eyebrow">本机摄像头</p>
+      <h2>实时情绪识别</h2>
+      <p class="muted" data-camera-status role="status">{{ camera['message'] }}</p>
+    </div>
+    <form class="action-row" method="post" action="{{ url_for('teacher.session_camera', session_id=class_session['id']) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="button button-primary" type="submit" name="action" value="start" {% if camera['state'] in ('starting', 'running', 'stopping') %}disabled{% endif %}>开始识别</button>
+      <button class="button button-secondary" type="submit" name="action" value="stop" {% if camera['state'] not in ('starting', 'running') %}disabled{% endif %}>停止识别</button>
+    </form>
+  </div>
+  <div class="camera-content">
+    <canvas class="camera-preview" data-camera-preview-url="{{ url_for('teacher.camera_preview', session_id=class_session['id']) }}"
+            aria-label="实时摄像头画面与人脸识别框" hidden></canvas>
+    <div class="camera-readout">
+      <p class="eyebrow">最近一次课堂采样</p>
+      <p data-camera-result>点击开始后，面向摄像头即可查看识别结果。</p>
+      <p class="muted">本次 AI 采样已入库 <strong data-camera-count>{{ camera['saved_count'] }}</strong> 条</p>
+      <aside class="teaching-advice" data-teaching-advice data-state="{{ advice['state'] }}" aria-label="实时教学建议">
+        <p class="eyebrow">最近 1 分钟 · 教学建议</p>
+        <h3 data-advice-title>{{ advice['title'] }}</h3>
+        <p data-advice-detail>{{ advice['detail'] }}</p>
+        <p class="panel-note" data-advice-counts>共 {{ advice['total'] }} 条 · 开心和平静 {{ advice['positive'] }} 条 · 关注信号 {{ advice['attention'] }} 条</p>
+      </aside>
+    </div>
+  </div>
+</section>
+{% endif %}
+<section class="metric-grid"><div class="metric-card"><span>反馈总数</span><strong data-total>{{ total }}</strong><small>次情绪提交</small></div><div class="metric-card"><span>积极感受</span><strong><span data-positive-rate>{{ positive_rate }}</span><sup>%</sup></strong><small>开心或平静</small></div><div class="metric-card"><span>参与者</span><strong data-participants>{{ participant_count }}</strong><small>位同学</small></div></section>
+<section class="panel mood-trend-panel">
+  <div class="panel-heading">
+    <div><p class="eyebrow">按分钟汇总</p><h2>课堂情绪变化</h2></div>
+    <span class="panel-note" data-class-trend-range>{{ timeline['range'] }}</span>
+  </div>
+  <div class="mood-chart-legend" aria-label="情绪类别">
+    {% for mood in moods.values() %}<span>{{ mood['label'] }}</span>{% endfor %}
+  </div>
+  <div class="chart-box compact"><canvas data-class-trend role="img" aria-label="六类课堂情绪的每分钟反馈次数"></canvas></div>
+</section>
+<div class="detail-grid"><section class="panel"><div class="panel-heading"><div><p class="eyebrow">情绪分布</p><h2>课堂状态</h2></div><span class="panel-note">自动更新</span></div><div class="mood-bars">{% for key, mood in moods.items() %}<div class="mood-bar-row" data-mood-row="{{ key }}"><span class="bar-emoji">{{ mood['emoji'] }}</span><span class="bar-label">{{ mood['label'] }}</span><div class="bar-track"><span data-mood-bar="{{ key }}" style="width: {{ (counts[key] * 100 / total) if total else 0 }}%"></span></div><strong data-mood-count="{{ key }}">{{ counts[key] }}</strong></div>{% endfor %}</div></section><section class="panel"><div class="panel-heading"><div><p class="eyebrow">最近反馈</p><h2>课堂动态</h2></div></div><div class="feed-list" data-live-feed>{% for row in records[:5] %}<div class="feed-item"><span class="mood-orb small">{{ moods[row['mood']]['emoji'] }}</span><div><strong>{{ row['participant'] }}</strong><p>{{ moods[row['mood']]['label'] }}{% if row['note'] %} · {{ row['note'] }}{% endif %}</p></div><time>{{ row['created_at'][11:16] }}</time></div>{% else %}<p class="muted">还没有反馈。</p>{% endfor %}</div></section></div>
+<script type="application/json" id="teacher-chart-data">{{ {'keys': moods.keys()|list, 'labels': moods.values()|map(attribute='label')|list, 'emojis': moods.values()|map(attribute='emoji')|list, 'url': url_for('teacher.session_summary', session_id=class_session['id']), 'timeline': timeline}|tojson }}</script>
+{% endblock %}
+

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}登录 · 心晴课堂{% endblock %}
+{% block content %}
+<section class="auth-visual" aria-label="课堂情绪示意">
+  <a class="brand brand-light" href="{{ url_for('auth.login') }}"><span class="brand-mark">☀</span><span>心晴课堂</span></a>
+  <div class="auth-copy">
+    <p class="eyebrow">课堂情绪检查</p>
+    <h1>让每一次感受<br>都能被看见</h1>
+    <p>用简单的情绪反馈，帮助教师及时理解课堂状态。</p>
+  </div>
+  <div class="emoji-scene" aria-hidden="true">
+    <span>😄</span><span>🙂</span><span>😕</span><span>😴</span><span>😟</span>
+  </div>
+</section>
+<section class="auth-panel">
+  <div class="auth-form-wrap">
+    <p class="eyebrow">欢迎回来</p>
+    <h2>登录账号</h2>
+    <form method="post" class="stack-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>用户名<input name="username" autocomplete="username" required autofocus placeholder="请输入用户名"></label>
+      <label>密码<span class="password-input"><input type="password" name="password" autocomplete="current-password" required placeholder="请输入密码"><button class="password-toggle" type="button" aria-label="显示密码" aria-pressed="false" data-password-toggle>显示</button></span></label>
+      <button class="button button-primary button-wide" type="submit">登录</button>
+    </form>
+    <p class="auth-switch">还没有账号？<a href="{{ url_for('auth.register') }}">立即注册</a></p>
+    <details class="demo-accounts">
+      <summary>演示账号</summary>
+      <p>学生：student / Student123!</p>
+      <p>教师：teacher / Teacher123!</p>
+      <p>管理员：admin / Admin123!</p>
+    </details>
+  </div>
+</section>
+{% endblock %}
+

@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block title %}课堂名单 · 心晴课堂{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ url_for('admin.sessions') }}">← 返回课堂安排</a><header class="page-header"><div><p class="eyebrow">{{ class_session['course_name'] }} · {{ class_session['starts_at'][:16] }}</p><h1>{{ class_session['title'] }}</h1><p>{{ class_session['teacher_name'] }} · 课堂代码 {{ class_session['session_code'] }}</p></div></header>
+<form method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><section class="panel roster-panel"><div class="panel-heading"><div><h2>参与名单</h2><p>勾选计划参与本场课堂的学生或教师。</p></div><button class="button button-primary" type="submit">保存名单</button></div>
+{% if class_session['phase'] == 'scheduled' %}<div class="date-filter schedule-time"><label>上课时间<input type="datetime-local" name="starts_at" value="{{ class_session['starts_at'][:16]|replace(' ', 'T') }}" required></label></div>{% endif %}
+<div class="roster-grid">{% for user in users %}<label class="roster-option"><input type="checkbox" name="user_ids" value="{{ user['id'] }}" {% if user['selected'] %}checked{% endif %}><span class="user-avatar">{{ user['display_name'][0] }}</span><span><strong>{{ user['display_name'] }}</strong><small>@{{ user['username'] }} · {{ '学生' if user['role'] == 'student' else '教师' }}</small></span></label>{% else %}<p class="muted">暂无可安排的用户。</p>{% endfor %}</div></section></form>
+{% endblock %}

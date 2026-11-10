@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}课堂安排 · 心晴课堂{% endblock %}
+{% block content %}
+<header class="page-header page-header-split">
+  <div><p class="eyebrow">系统管理</p><h1>课堂安排</h1><p>为教师创建的课堂安排参与名单，也可代排课堂。</p></div>
+  <button class="button button-primary" type="button" data-modal-open="schedule-session">＋ 代排课堂</button>
+</header>
+<section class="panel table-panel"><div class="table-scroll"><table><thead><tr><th>课堂</th><th>班级 / 教室</th><th>教师</th><th>开始时间</th><th>状态</th><th>参与人数</th><th></th></tr></thead><tbody>{% for item in sessions %}<tr><td><strong>{{ item['title'] }}</strong><small>{{ item['course_name'] }} · {{ item['session_code'] }}</small></td><td>{{ item['class_name'] or '未填写班级' }}{% if item['classroom'] %}<small>{{ item['classroom'] }}</small>{% endif %}</td><td>{{ item['teacher_name'] }}</td><td class="nowrap">{{ item['starts_at'][:16] }}</td><td><span class="status-text {{ 'active' if item['phase'] == 'open' else item['phase'] }}">● {{ {'open':'进行中', 'closed':'已结束', 'scheduled':'待开始'}[item['phase']] }}</span></td><td>{{ item['participant_count'] }}</td><td><a href="{{ url_for('admin.participants', session_id=item['id']) }}">管理名单</a></td></tr>{% else %}<tr><td colspan="7" class="table-empty">暂无课堂。</td></tr>{% endfor %}</tbody></table></div></section>
+<div class="modal-backdrop" data-modal="schedule-session" hidden>
+  <section class="modal" role="dialog" aria-modal="true" aria-labelledby="schedule-session-title">
+    <button class="modal-close icon-button" type="button" data-modal-close aria-label="关闭">×</button>
+    <p class="eyebrow">课堂排期</p><h2 id="schedule-session-title">代排课堂</h2>
+    <form method="post" class="stack-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>授课教师<select name="teacher_id" required><option value="">请选择教师</option>
+        {% for teacher in teachers %}<option value="{{ teacher['id'] }}">{{ teacher['display_name'] }} · {{ teacher['username'] }}</option>{% endfor %}
+      </select></label>
+      <label>上课时间<input type="datetime-local" name="starts_at" required></label>
+      <label>课程名称<input name="course_name" maxlength="60" required></label>
+      <label>课堂主题<input name="title" maxlength="60" required></label>
+      <label>班级名称<input name="class_name" maxlength="60"></label>
+      <label>教室 / 上课地点<input name="classroom" maxlength="60"></label>
+      <button class="button button-primary button-wide" type="submit">保存并安排名单</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

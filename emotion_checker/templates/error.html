@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block title %}{{ status }} · 心晴课堂{% endblock %}
+{% block content %}
+<section class="empty-state"><span aria-hidden="true">{{ '🧭' if status == 404 else '🔒' }}</span><h1>{{ status }}</h1><h2>{{ message }}</h2><a class="button button-primary" href="{{ url_for('main.index') }}">返回首页</a></section>
+{% endblock %}

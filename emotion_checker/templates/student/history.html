@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}我的记录 · 心晴课堂{% endblock %}
+{% block content %}
+<header class="page-header"><div><p class="eyebrow">个人记录</p><h1>我的情绪足迹</h1><p>回看每一次课堂感受和当时的补充说明。</p></div></header>
+{% if records %}
+<section class="panel mood-trend-panel">
+  <div class="panel-heading">
+    <div><p class="eyebrow">个人打卡</p><h2>我的情绪变化</h2></div>
+    <span class="panel-note">最近 {{ journey|length }} 次 · 按提交顺序</span>
+  </div>
+  <div class="chart-box compact"><canvas data-student-trend role="img" aria-label="个人情绪记录随提交时间的变化"></canvas></div>
+</section>
+<script type="application/json" id="student-trend-data">{{ {'keys': moods.keys()|list, 'labels': moods.values()|map(attribute='label')|list, 'records': journey}|tojson }}</script>
+<section class="timeline">
+  {% for row in records %}
+  <article class="timeline-item detailed"><span class="mood-orb mood-{{ row['mood'] }}">{{ moods[row['mood']]['emoji'] }}</span><div class="timeline-content"><div><strong>{{ moods[row['mood']]['label'] }}</strong>{% if row['is_anonymous'] %}<span class="tag">匿名</span>{% endif %}</div><h2>{{ row['title'] }}</h2><p>{{ row['course_name'] }} · {{ row['teacher_name'] }}</p>{% if row['note'] %}<blockquote>{{ row['note'] }}</blockquote>{% endif %}</div><time>{{ row['created_at'][:16] }}</time></article>
+  {% endfor %}
+</section>
+{% else %}
+<section class="empty-state"><span>📝</span><h2>还没有情绪记录</h2><p>加入进行中的课堂，完成第一次情绪打卡。</p><a class="button button-primary" href="{{ url_for('main.dashboard') }}">查看课堂</a></section>
+{% endif %}
+{% endblock %}

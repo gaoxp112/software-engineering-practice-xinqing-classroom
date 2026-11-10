@@ -1,0 +1,8 @@
+<label>课程<select name="course_id">
+  <option value="">全部课程</option>
+  {% for course in courses %}<option value="{{ course['id'] }}" {% if course['id'] == selected_course %}selected{% endif %}>{{ course['name'] }} · {{ course['teacher_name'] }}</option>{% endfor %}
+</select></label>
+<label>班级<select name="class_name">
+  <option value="">全部班级</option>
+  {% for item in classes %}<option value="{{ item['class_name'] }}" {% if item['class_name'] == selected_class %}selected{% endif %}>{{ item['class_name'] }}</option>{% endfor %}
+</select></label>

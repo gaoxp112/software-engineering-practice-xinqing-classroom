@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}记录感受 · 心晴课堂{% endblock %}
+{% block content %}
+<div class="checkin-layout">
+  <section class="checkin-context">
+    <a class="back-link" href="{{ url_for('main.dashboard') }}">← 返回课堂</a>
+    <p class="eyebrow">{{ class_session['course_name'] }}</p><h1>{{ class_session['title'] }}</h1>
+    <p>{{ class_session['teacher_name'] }} · 课堂代码 {{ class_session['session_code'] }}</p>
+    <div class="privacy-note"><span aria-hidden="true">◉</span><div><strong>你的反馈用于改善课堂</strong><p>选择匿名后，教师端不会显示你的姓名。</p></div></div>
+  </section>
+  <section class="checkin-form-section">
+    <form method="post" class="checkin-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <fieldset class="mood-fieldset"><legend>此刻，你感觉怎么样？</legend><p>请选择最接近的一项</p>
+        <div class="mood-grid">
+          {% for key, mood in moods.items() %}
+          <label class="mood-option"><input type="radio" name="mood" value="{{ key }}" required><span class="emoji">{{ mood['emoji'] }}</span><span>{{ mood['label'] }}</span><i aria-hidden="true">✓</i></label>
+          {% endfor %}
+        </div>
+      </fieldset>
+      <label>想补充些什么？<textarea name="note" maxlength="240" rows="3" placeholder="选填，例如：哪个知识点没听懂"></textarea><small class="char-count">0 / 240</small></label>
+      <label class="switch-row"><span><strong>匿名提交</strong><small>教师端将显示为“匿名同学”</small></span><input type="checkbox" name="is_anonymous" value="1" class="switch"></label>
+      <button class="button button-primary button-wide button-large" type="submit">提交本次感受</button>
+    </form>
+  </section>
+</div>
+{% endblock %}
+

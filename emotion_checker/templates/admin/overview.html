@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}管理概览 · 心晴课堂{% endblock %}
+{% block content %}
+<header class="page-header"><div><p class="eyebrow">系统管理</p><h1>数据概览</h1><p>按课程、班级和时间段查看课堂反馈。</p></div></header>
+<section class="panel statistics-filter">
+  <form class="filter-form record-filter" method="get">
+    {% include 'admin/dimension_filters.html' %}
+    <label>开始日期<input type="date" name="start" value="{{ start_date }}" required></label>
+    <label>结束日期<input type="date" name="end" value="{{ end_date }}" required></label>
+    <button class="button button-dark" type="submit">更新统计</button>
+  </form>
+</section>
+<section class="metric-grid admin-metrics"><div class="metric-card"><span>用户总数</span><strong>{{ metrics['users'] }}</strong><small>已注册账号</small></div><div class="metric-card"><span>课堂总数</span><strong>{{ metrics['sessions'] }}</strong><small>匹配课程与班级</small></div><div class="metric-card"><span>反馈总数</span><strong>{{ metrics['checkins'] }}</strong><small>筛选范围内记录</small></div><div class="metric-card"><span>进行中</span><strong>{{ metrics['active'] }}</strong><small>当前开放课堂</small></div></section>
+<div class="detail-grid"><section class="panel"><div class="panel-heading"><div><p class="eyebrow">{{ start_date }} 至 {{ end_date }}</p><h2>情绪分布</h2></div><a href="{{ url_for('admin.records', start=start_date, end=end_date, course_id=selected_course, class_name=selected_class) }}">查看数据</a></div><div class="mood-bars">{% set total = mood_counts.values()|sum %}{% for key, mood in moods.items() %}<div class="mood-bar-row"><span class="bar-emoji">{{ mood['emoji'] }}</span><span class="bar-label">{{ mood['label'] }}</span><div class="bar-track"><span style="width: {{ (mood_counts[key] * 100 / total) if total else 0 }}%"></span></div><strong>{{ mood_counts[key] }}</strong></div>{% endfor %}</div></section><section class="panel"><div class="panel-heading"><div><p class="eyebrow">占比</p><h2>情绪构成</h2></div><span class="panel-note">共 {{ total }} 次</span></div>{% if total %}<div class="chart-box compact"><canvas data-chart="donut" aria-label="情绪占比图"></canvas></div>{% else %}<p class="empty-chart">该时间范围暂无记录</p>{% endif %}</section></div>
+<section class="panel trend-panel"><div class="panel-heading"><div><p class="eyebrow">{{ trend_period }}</p><h2>情绪变化趋势</h2></div><span class="panel-note">每 {{ trend_bucket_hours }} 小时汇总</span></div><div class="chart-box"><canvas data-chart="trend" aria-label="筛选范围内情绪变化折线图"></canvas></div></section>
+<section class="panel recent-panel"><div class="panel-heading"><div><p class="eyebrow">系统动态</p><h2>最近反馈</h2></div></div><div class="feed-list feed-columns">{% for row in recent %}<div class="feed-item"><span class="mood-orb small">{{ moods[row['mood']]['emoji'] }}</span><div><strong>{{ row['display_name'] }}</strong><p>{{ moods[row['mood']]['label'] }} · {{ row['title'] }}</p></div><time>{{ row['created_at'][11:16] }}</time></div>{% else %}<p class="muted">暂无数据。</p>{% endfor %}</div></section>
+<script type="application/json" id="chart-data">{{ {'keys': moods.keys()|list, 'labels': moods.values()|map(attribute='label')|list, 'counts': mood_counts.values()|list, 'trend': trend, 'trendLabels': trend_labels}|tojson }}</script>
+{% endblock %}
+

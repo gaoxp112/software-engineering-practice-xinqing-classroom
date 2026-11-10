@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}课堂管理 · 心晴课堂{% endblock %}
+{% block content %}
+<header class="page-header page-header-split"><div><p class="eyebrow">教师工作台</p><h1>课堂管理</h1><p>创建一次情绪检查，实时了解课堂状态。</p></div><div class="action-row"><form method="post" action="{{ url_for('main.join') }}" class="join-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><label><span>加入课堂并提交情绪</span><span class="input-action"><input name="session_code" maxlength="12" placeholder="课堂代码" required><button class="button button-dark" type="submit">加入</button></span></label></form><button class="button button-primary" type="button" data-modal-open="create-session">＋ 新建课堂</button></div></header>
+<section class="session-grid teacher-grid">
+{% for item in sessions %}<article class="session-card teacher-session"><div class="session-main"><div class="status-line"><span class="status-dot {% if item['phase'] == 'closed' %}closed{% endif %}"></span>{{ {'open':'进行中', 'closed':'已结束', 'scheduled':'待开始'}[item['phase']] }}<span>代码 {{ item['session_code'] }}</span></div><p class="course-name">{{ item['course_name'] }}</p><p class="meta">{{ item['class_name'] or '未填写班级' }}{% if item['classroom'] %} · {{ item['classroom'] }}{% endif %}</p><h2>{{ item['title'] }}</h2><p class="meta">开课时间 {{ item['starts_at'][:16] }}</p><div class="stat-row"><span><strong>{{ item['participant_count'] }}</strong>参与者</span><span><strong>{{ item['checkin_count'] }}</strong>次反馈</span></div><div class="card-footer"><a class="button button-secondary" href="{{ url_for('teacher.session_detail', session_id=item['id']) }}">查看看板</a>{% if item['phase'] == 'open' %}<span class="live-label">● 接收中</span>{% endif %}</div></div></article>
+{% else %}<section class="empty-state"><span>✦</span><h2>创建你的第一堂课堂</h2><p>生成课堂代码后，学生即可加入并反馈。</p><button class="button button-primary" type="button" data-modal-open="create-session">新建课堂</button></section>{% endfor %}
+</section>
+<div class="modal-backdrop" data-modal="create-session" hidden>
+  <section class="modal" role="dialog" aria-modal="true" aria-labelledby="create-session-title">
+    <button class="modal-close icon-button" type="button" data-modal-close aria-label="关闭">×</button>
+    <p class="eyebrow">新建课堂</p><h2 id="create-session-title">创建或预约课堂</h2>
+    <form method="post" class="stack-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>课程名称<input name="course_name" required maxlength="60" placeholder="例如：软件工程实践"></label>
+      <label>班级名称<input name="class_name" maxlength="60" placeholder="例如：软件工程 2401"></label>
+      <label>教室 / 上课地点<input name="classroom" maxlength="60" placeholder="例如：教学楼 A-302"></label>
+      <label>课堂主题<input name="title" required maxlength="60" placeholder="例如：需求分析与用例"></label>
+      <label>预约开课时间<input type="datetime-local" name="starts_at"><small>选时间即可预约，留空则立即开放。</small></label>
+      <button class="button button-primary button-wide" type="submit">保存课堂</button>
+    </form>
+  </section>
+</div>
+{% endblock %}
+

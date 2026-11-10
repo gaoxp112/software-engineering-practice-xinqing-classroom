@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}用户管理 · 心晴课堂{% endblock %}
+{% block content %}
+<header class="page-header page-header-split"><div><p class="eyebrow">系统管理</p><h1>用户管理</h1><p>查看账号、角色与反馈参与情况。</p></div><button class="button button-primary" type="button" data-modal-open="create-user">＋ 添加用户</button></header>
+<section class="panel table-panel"><div class="panel-heading"><h2>用户列表 <span class="count-badge">{{ users|length }}</span></h2><form class="search-form" method="get" action="{{ url_for('admin.users') }}"><input type="search" name="q" value="{{ keyword }}" placeholder="搜索姓名或用户名" aria-label="搜索用户"><button class="button button-secondary" type="submit">搜索</button></form></div><div class="table-scroll"><table><thead><tr><th>用户</th><th>角色</th><th>反馈次数</th><th>状态</th><th></th></tr></thead><tbody>{% for user in users %}<tr><td><div class="table-user"><span class="user-avatar">{{ user['display_name'][0] }}</span><span><strong>{{ user['display_name'] }}</strong><small>@{{ user['username'] }}</small></span></div></td><td><span class="tag">{{ {'student':'学生','teacher':'教师','admin':'管理员'}[user['role']] }}</span></td><td>{{ user['checkin_count'] }}</td><td><span class="status-text {{ 'active' if user['is_active'] else 'inactive' }}">● {{ '正常' if user['is_active'] else '已停用' }}</span></td><td>{% if user['role'] != 'admin' %}<form method="post" action="{{ url_for('admin.toggle_user', user_id=user['id']) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="text-button" type="submit">{{ '停用' if user['is_active'] else '启用' }}</button></form>{% endif %}</td></tr>{% else %}<tr><td colspan="5" class="table-empty">没有找到匹配的用户。</td></tr>{% endfor %}</tbody></table></div></section>
+<div class="modal-backdrop" data-modal="create-user" {% if not create_error %}hidden{% endif %}>
+  <section class="modal" role="dialog" aria-modal="true" aria-labelledby="create-user-title">
+    <button class="modal-close icon-button" type="button" data-modal-close aria-label="关闭">×</button>
+    <p class="eyebrow">管理员操作</p><h2 id="create-user-title">添加用户</h2>
+    {% if create_error %}<p class="flash flash-error" role="alert">{{ create_error }}</p>{% endif %}
+    <form method="post" action="{{ url_for('admin.create_user') }}" class="stack-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>姓名或昵称<input name="display_name" required minlength="2" maxlength="30" value="{{ draft.get('display_name', '') }}" placeholder="例如：小明"></label>
+      <label>用户名<input name="username" required minlength="3" maxlength="24" value="{{ draft.get('username', '') }}" placeholder="例如：xiaoming"><small>登录用，3–24 个字符，使用字母、数字或下划线。</small></label>
+      <label>角色<select name="role">
+        {% for key, label in [('student', '学生'), ('teacher', '教师'), ('admin', '管理员')] %}
+        <option value="{{ key }}" {% if draft.get('role', 'student') == key %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select></label>
+      <label>初始密码<input type="password" name="password" required minlength="8" autocomplete="new-password"><small>至少 8 位，并同时包含字母和数字。</small></label>
+      <button class="button button-primary button-wide" type="submit">创建用户</button>
+    </form>
+  </section>
+</div>
+{% endblock %}
+

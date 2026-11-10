@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}课堂 · 心晴课堂{% endblock %}
+{% block content %}
+<header class="page-header page-header-split">
+  <div><p class="eyebrow">今天感觉如何，{{ g.user['display_name'] }}</p><h1>进行中的课堂</h1><p>选择课堂，提交你此刻最接近的感受。</p></div>
+  <form method="post" action="{{ url_for('main.join') }}" class="join-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label><span>使用课堂代码加入</span><span class="input-action"><input name="session_code" maxlength="12" placeholder="例如 SE2026" required><button class="button button-dark" type="submit">加入</button></span></label>
+  </form>
+</header>
+
+{% if upcoming %}
+<section class="panel mood-trend-panel" aria-label="已安排课堂">
+  <div class="panel-heading"><div><p class="eyebrow">课堂安排</p><h2>即将开始</h2></div></div>
+  <div class="feed-list">
+    {% for item in upcoming %}<div class="feed-item"><div><strong>{{ item['title'] }}</strong><p>{{ item['course_name'] }} · {{ item['teacher_name'] }}{% if item['classroom'] %} · {{ item['classroom'] }}{% endif %}</p></div><time>{{ item['starts_at'][:16] }}</time></div>{% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% if sessions %}
+<section class="session-grid" aria-label="进行中的课堂">
+  {% for item in sessions %}
+  <article class="session-card">
+    <div class="session-accent">{{ ['😄','🙂','😕'][loop.index0 % 3] }}</div>
+    <div class="session-main">
+      <div class="status-line"><span class="status-dot"></span>正在进行 <span>代码 {{ item['session_code'] }}</span></div>
+      <p class="course-name">{{ item['course_name'] }}</p><h2>{{ item['title'] }}</h2>
+      <p class="meta">{{ item['teacher_name'] }} · {{ item['starts_at'][:16] }}</p>
+      <div class="card-footer"><span>已提交 {{ item['my_count'] }} 次</span><a class="button button-primary" href="{{ url_for('main.checkin', session_id=item['id']) }}">记录感受</a></div>
+    </div>
+  </article>
+  {% endfor %}
+</section>
+{% else %}
+<section class="empty-state"><span aria-hidden="true">☕</span><h2>暂无进行中的课堂</h2><p>向教师获取课堂代码后即可加入。</p></section>
+{% endif %}
+
+{% if recent %}
+<section class="section-block">
+  <div class="section-heading"><div><p class="eyebrow">最近记录</p><h2>你的情绪足迹</h2></div><a href="{{ url_for('main.history') }}">查看全部</a></div>
+  <div class="timeline compact-timeline">
+    {% for row in recent %}<div class="timeline-item"><span class="mood-orb">{{ moods[row['mood']]['emoji'] }}</span><div><strong>{{ moods[row['mood']]['label'] }}</strong><p>{{ row['course_name'] }} · {{ row['title'] }}</p></div><time>{{ row['created_at'][:16] }}</time></div>{% endfor %}
+  </div>
+</section>
+{% endif %}
+{% endblock %}
+

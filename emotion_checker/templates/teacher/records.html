@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}课堂反馈明细 · 心晴课堂{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ url_for('teacher.session_detail', session_id=class_session['id']) }}">← 返回课堂看板</a>
+<header class="page-header"><div><p class="eyebrow">{{ class_session['course_name'] }} · {{ class_session['title'] }}</p><h1>课堂反馈明细</h1><p>按学生和提交时间查看记录。按学生筛选时显示实名反馈。</p></div></header>
+<section class="panel table-panel">
+  <div class="panel-heading">
+    <form class="filter-form record-filter history-filter" method="get">
+      <label>学生<select name="student_id"><option value="">全部反馈</option>
+        {% for student in students %}<option value="{{ student['id'] }}" {% if student['id'] == selected_student %}selected{% endif %}>{{ student['display_name'] }} · {{ student['username'] }}</option>{% endfor %}
+      </select></label>
+      <label>开始时间<input type="datetime-local" name="start" value="{{ start }}"></label>
+      <label>结束时间<input type="datetime-local" name="end" value="{{ end }}"></label>
+      <button class="button button-dark" type="submit">应用筛选</button>
+    </form>
+    <span class="panel-note">共 {{ total }} 条</span>
+  </div>
+  <div class="table-scroll"><table>
+    <thead><tr><th>提交时间</th><th>提交者</th><th>情绪</th><th>来源</th><th>补充说明</th></tr></thead>
+    <tbody>{% for row in records %}
+      <tr><td class="nowrap">{{ row['created_at'][:16] }}</td><td>{{ row['participant'] }}</td><td>{{ moods[row['mood']]['emoji'] }} {{ moods[row['mood']]['label'] }}</td><td><span class="tag">{{ 'AI 采样' if row['source'] == 'AI' else '手动提交' }}</span></td><td>{{ row['note'] or '—' }}</td></tr>
+    {% else %}<tr><td colspan="5" class="table-empty">没有符合条件的课堂反馈。</td></tr>{% endfor %}</tbody>
+  </table></div>
+  {% if pages > 1 %}<nav class="pagination" aria-label="课堂反馈分页">
+    {% if page > 1 %}<a class="button button-secondary" href="{{ url_for('teacher.session_records', session_id=class_session['id'], student_id=selected_student, start=start, end=end, page=page-1) }}">上一页</a>{% endif %}
+    <span>第 {{ page }} / {{ pages }} 页</span>
+    {% if page < pages %}<a class="button button-secondary" href="{{ url_for('teacher.session_records', session_id=class_session['id'], student_id=selected_student, start=start, end=end, page=page+1) }}">下一页</a>{% endif %}
+  </nav>{% endif %}
+</section>
+{% endblock %}

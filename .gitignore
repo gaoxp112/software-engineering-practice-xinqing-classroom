@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+.env
+.env.*
+!.env.example
+judge.env
+judge.env.*
+instance/*.sqlite3
+instance/*.sqlite3-*
+instance/*.db
+instance/*.db-*
+docs/*结题报告.docx

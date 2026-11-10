@@ -1,0 +1,252 @@
+{
+  "generatedAt": "2026-10-24T08:15:18.487Z",
+  "reports": [
+    {
+      "name": "desktop-01-login",
+      "url": "/login",
+      "title": "登录 · 心晴课堂",
+      "viewport": [
+        1366,
+        768
+      ],
+      "documentWidth": 1366,
+      "horizontalOverflow": false,
+      "clippedControls": [],
+      "textOverflow": [],
+      "canvasChecks": []
+    },
+    {
+      "name": "desktop-02-student-dashboard",
+      "url": "/dashboard",
+      "title": "课堂 · 心晴课堂",
+      "viewport": [
+        1366,
+        768
+      ],
+      "documentWidth": 1366,
+      "horizontalOverflow": false,
+      "clippedControls": [],
+      "textOverflow": [],
+      "canvasChecks": []
+    },
+    {
+      "name": "desktop-03-checkin",
+      "url": "/checkin/1",
+      "title": "记录感受 · 心晴课堂",
+      "viewport": [
+        1366,
+        768
+      ],
+      "documentWidth": 1366,
+      "horizontalOverflow": false,
+      "clippedControls": [],
+      "textOverflow": [],
+      "canvasChecks": []
+    },
+    {
+      "name": "desktop-04-history",
+      "url": "/history",
+      "title": "我的记录 · 心晴课堂",
+      "viewport": [
+        1366,
+        768
+      ],
+      "documentWidth": 1366,
+      "horizontalOverflow": false,
+      "clippedControls": [],
+      "textOverflow": [],
+      "canvasChecks": []
+    },
+    {
+      "name": "desktop-05-teacher-session",
+      "url": "/teacher/sessions/1",
+      "title": "需求分析与用例 · 心晴课堂",
+      "viewport": [
+        1366,
+        768
+      ],
+      "documentWidth": 1366,
+      "horizontalOverflow": false,
+      "clippedControls": [],
+      "textOverflow": [],
+      "canvasChecks": []
+    },
+    {
+      "name": "desktop-06-admin-overview",
+      "url": "/admin/",
+      "title": "管理概览 · 心晴课堂",
+      "viewport": [
+        1366,
+        768
+      ],
+      "documentWidth": 1366,
+      "horizontalOverflow": false,
+      "clippedControls": [],
+      "textOverflow": [],
+      "canvasChecks": [
+        {
+          "width": 440,
+          "height": 250,
+          "nonblank": true
+        },
+        {
+          "width": 1126,
+          "height": 300,
+          "nonblank": true
+        }
+      ]
+    },
+    {
+      "name": "desktop-07-admin-users",
+      "url": "/admin/users",
+      "title": "用户管理 · 心晴课堂",
+      "viewport": [
+        1366,
+        768
+      ],
+      "documentWidth": 1366,
+      "horizontalOverflow": false,
+      "clippedControls": [],
+      "textOverflow": [],
+      "canvasChecks": []
+    },
+    {
+      "name": "desktop-08-admin-records",
+      "url": "/admin/records",
+      "title": "情绪数据 · 心晴课堂",
+      "viewport": [
+        1366,
+        768
+      ],
+      "documentWidth": 1366,
+      "horizontalOverflow": false,
+      "clippedControls": [],
+      "textOverflow": [],
+      "canvasChecks": []
+    },
+    {
+      "name": "mobile-01-login",
+      "url": "/login",
+      "title": "登录 · 心晴课堂",
+      "viewport": [
+        360,
+        800
+      ],
+      "documentWidth": 360,
+      "horizontalOverflow": false,
+      "clippedControls": [],
+      "textOverflow": [],
+      "canvasChecks": []
+    },
+    {
+      "name": "mobile-02-student-dashboard",
+      "url": "/dashboard",
+      "title": "课堂 · 心晴课堂",
+      "viewport": [
+        360,
+        800
+      ],
+      "documentWidth": 360,
+      "horizontalOverflow": false,
+      "clippedControls": [],
+      "textOverflow": [],
+      "canvasChecks": []
+    },
+    {
+      "name": "mobile-03-checkin",
+      "url": "/checkin/1",
+      "title": "记录感受 · 心晴课堂",
+      "viewport": [
+        360,
+        800
+      ],
+      "documentWidth": 360,
+      "horizontalOverflow": false,
+      "clippedControls": [],
+      "textOverflow": [],
+      "canvasChecks": []
+    },
+    {
+      "name": "mobile-04-history",
+      "url": "/history",
+      "title": "我的记录 · 心晴课堂",
+      "viewport": [
+        360,
+        800
+      ],
+      "documentWidth": 360,
+      "horizontalOverflow": false,
+      "clippedControls": [],
+      "textOverflow": [],
+      "canvasChecks": []
+    },
+    {
+      "name": "mobile-05-teacher-session",
+      "url": "/teacher/sessions/1",
+      "title": "需求分析与用例 · 心晴课堂",
+      "viewport": [
+        360,
+        800
+      ],
+      "documentWidth": 360,
+      "horizontalOverflow": false,
+      "clippedControls": [],
+      "textOverflow": [],
+      "canvasChecks": []
+    },
+    {
+      "name": "mobile-06-admin-overview",
+      "url": "/admin/",
+      "title": "管理概览 · 心晴课堂",
+      "viewport": [
+        360,
+        800
+      ],
+      "documentWidth": 360,
+      "horizontalOverflow": false,
+      "clippedControls": [],
+      "textOverflow": [],
+      "canvasChecks": [
+        {
+          "width": 300,
+          "height": 250,
+          "nonblank": true
+        },
+        {
+          "width": 300,
+          "height": 300,
+          "nonblank": true
+        }
+      ]
+    },
+    {
+      "name": "mobile-07-admin-users",
+      "url": "/admin/users",
+      "title": "用户管理 · 心晴课堂",
+      "viewport": [
+        360,
+        800
+      ],
+      "documentWidth": 360,
+      "horizontalOverflow": false,
+      "clippedControls": [],
+      "textOverflow": [],
+      "canvasChecks": []
+    },
+    {
+      "name": "mobile-08-admin-records",
+      "url": "/admin/records",
+      "title": "情绪数据 · 心晴课堂",
+      "viewport": [
+        360,
+        800
+      ],
+      "documentWidth": 360,
+      "horizontalOverflow": false,
+      "clippedControls": [],
+      "textOverflow": [],
+      "canvasChecks": []
+    }
+  ],
+  "errors": []
+}

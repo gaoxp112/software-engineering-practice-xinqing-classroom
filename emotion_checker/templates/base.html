@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#16302b">
+  <title>{% block title %}心晴课堂{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+</head>
+<body class="{% if not g.user %}auth-body{% endif %}">
+  {% if g.user %}
+  <header class="topbar">
+    <a class="brand" href="{{ url_for('main.dashboard') }}" aria-label="心晴课堂首页">
+      <span class="brand-mark" aria-hidden="true">☀</span>
+      <span>心晴课堂</span>
+    </a>
+    <button class="nav-toggle icon-button" type="button" aria-label="打开导航" aria-expanded="false" data-nav-toggle>☰</button>
+    <nav class="nav-links" data-nav>
+      {% if g.user['role'] == 'student' %}
+        <a href="{{ url_for('main.dashboard') }}">课堂</a>
+        <a href="{{ url_for('main.history') }}">我的记录</a>
+      {% elif g.user['role'] == 'teacher' %}
+        <a href="{{ url_for('teacher.sessions') }}">课堂管理</a>
+        <a href="{{ url_for('main.history') }}">我的情绪记录</a>
+      {% else %}
+        <a href="{{ url_for('admin.overview') }}">概览</a>
+        <a href="{{ url_for('admin.users') }}">用户</a>
+        <a href="{{ url_for('admin.sessions') }}">课堂安排</a>
+        <a href="{{ url_for('admin.records') }}">情绪数据</a>
+      {% endif %}
+      <a href="{{ url_for('auth.settings') }}">账号设置</a>
+      <form method="post" action="{{ url_for('auth.logout') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="nav-logout" type="submit">退出</button>
+      </form>
+    </nav>
+    <div class="user-chip">
+      <span class="user-avatar">{{ g.user['display_name'][0] }}</span>
+      <span><strong>{{ g.user['display_name'] }}</strong><small>{{ {'student':'学生','teacher':'教师','admin':'管理员'}[g.user['role']] }}</small></span>
+    </div>
+  </header>
+  {% endif %}
+
+  <div class="flash-stack" aria-live="polite">
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+      <div class="flash flash-{{ category }}">{{ message }}<button type="button" aria-label="关闭提示" data-dismiss>×</button></div>
+    {% endfor %}
+  </div>
+
+  <main class="{% if g.user %}page-shell{% else %}auth-shell{% endif %}">
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>
+
