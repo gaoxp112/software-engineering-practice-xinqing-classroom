@@ -49,7 +49,3 @@ The configured confidence threshold defaults to `0.6` and is controlled by
 `data.rejected`; accepted records are written with `source=AI`, confidence,
 timestamp, and optional anonymous user ID. Raw frames and images are never
 accepted or stored by this endpoint.
-
-Set `EMOTION_AI_SERVICE_TOKEN` in deployment. The development fallback token
-is intentionally documented only for local demonstrations and must be changed
-before sharing the service.

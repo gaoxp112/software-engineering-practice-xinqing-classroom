@@ -4,7 +4,7 @@
 
 - Windows 11，本机 Python 3.11+，Flask 3.1.3，SQLite，Microsoft Edge。
 - 功能测试：`python -m unittest discover -s tests -v`。
-- 性能测试：`python tests\\benchmark.py`。
+- 性能测试：`python tests/benchmark.py`。
 
 ## 功能结果
 
@@ -19,6 +19,19 @@
 - REST API 统一响应、登录/RBAC、课堂统计资源归属、OpenAPI 文档和管理员排班。
 - AI 独立服务令牌、置信度阈值、匿名结果入库、无效结果拒绝及 CSV 公式注入防护。
 - 摄像头集成测试模拟视频帧和模型预测，验证教师启动识别、预览响应、匿名采样入库及结束课堂后释放摄像头。
+
+## 代表性测试用例
+
+| 编号 | 操作 | 预期结果 | 对应测试文件 |
+| --- | --- | --- | --- |
+| T01 | 学生登录、加入课堂并匿名提交 | 历史页可见反馈，教师端显示匿名 | `tests/test_app.py` |
+| T02 | 教师创建或预约课堂并查看看板 | 生成课堂代码，统计和导出按本课堂聚合 | `tests/test_app.py` |
+| T03 | 教师访问其他教师的课堂 | 服务端拒绝越权访问 | `tests/test_app.py` |
+| T04 | 管理员安排参与名单并按课程、班级和时间筛选 | 名单正确关联，筛选条件与统计及导出一致 | `tests/test_app.py` |
+| T05 | 查询课堂最新反馈和最近一分钟教学建议 | 手动和摄像头反馈按时间排列，建议按近一分钟反馈更新 | `tests/test_app.py` |
+| T06 | 通过 REST 登录并提交、查询情绪记录 | 返回统一 JSON，权限校验和记录字段符合约定 | `tests/test_api.py` |
+| T07 | 模拟摄像头帧与模型结果，开始识别后结束课堂 | 预览可获取，达标采样匿名入库，摄像头释放 | `tests/test_camera.py` |
+| T08 | 使用同名课程和不同教师的旧版数据库启动应用 | 迁移正确关联课程，保留课堂 ID 及子记录 | `tests/test_course_migration.py` |
 
 ## 性能基准
 
@@ -35,5 +48,3 @@
 ## 视觉检查
 
 使用 Microsoft Edge 内核在 1366×768 和 360×800 两个视口验收 16 个核心页面状态；指导书补充验收又覆盖 20 个页面截图。结果：无页面级横向溢出、无控件或按钮文字裁切、无控制台错误，所有图表 Canvas 均正常绘制。
-
-完整逐页验收见 `docs/strict-validation.md`；核心截图及机器可读结果位于 `docs/strict-audit/`，指导书补充视觉记录位于 `docs/guidance-visual-qa/`。AI 来源与置信度新增列已在隔离数据库中打开管理端记录页检查，截图位于 `docs/guidance-visual-qa/current/admin-records-ai-desktop.png`。
